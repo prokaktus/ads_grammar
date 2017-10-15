@@ -8,7 +8,7 @@ from .tokenizer import Lexer, SyntaxError
 
 def _check_string(s):
     if s.count('{}') != 1:
-        return 'provide string with exact one substituion rule (\{\})'
+        return 'provide string with exact one substituion rule ("{}")'
     
 
 
@@ -69,6 +69,8 @@ class Parser:
         try:
             args = p[3]
             p[0] = self.predefined_funcs[n](*args)
+        except InvalidUsage:
+            raise
         except Exception:
             raise InvalidUsage('Invalid usage of function {} with '
                                'parameters {}'.format(n, args)) 

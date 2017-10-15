@@ -1,11 +1,11 @@
 import pytest
 
 from ads_grammar.tokenizer import Lexer, SyntaxError
-from ads_grammar.parser import Parser, UnknownVariable
+from ads_grammar.parser import Parser, UnknownVariable, InvalidUsage
 
 
 def test_parser():
-    parser = Parser(context={'jo': 'JIMMY'})
+    parser = Parser(context={'jo': 'JiMMY'})
     parser.build()
     assert parser.parser
     assert parser.lexer
@@ -29,6 +29,10 @@ def test_parser_variants():
 
     res = parser.parse('variants("buy {} with discount", {vendor}, {model})')
     assert res == ['buy Apple with discount', 'buy Ipad with discount']
+
+    with pytest.raises(InvalidUsage) as exc_info:
+        parser.parse('variants("buy {} with {}", "phone", "laptop")')
+    assert 'exact one substituion rule ("{}")' in str(exc_info);
 
 
 def test_parser_combinations():
